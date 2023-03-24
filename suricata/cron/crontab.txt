@@ -1,0 +1,1 @@
+00 01 * * 1 /opt/suricata/cron/suricata-cron.sh >> /opt/suricata/cron/suricata-update-rules.log 2>&1

@@ -1,0 +1,58 @@
+version: '2.2'
+services:
+  filebeat:
+    user: root
+    networks:
+      - filebeat
+    image: docker.elastic.co/beats/filebeat:8.1.1
+    container_name: filebeat
+    hostname: dev
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml/
+      - ./suricata.yml:/usr/share/filebeat/modules.d/suricata.yml/
+      - ./data/:/var/log/suricata/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Bangkok
+      - ESHOSTURL1=${ESHOSTURL1}
+      - ESHOSTURL2=${ESHOSTURL2}
+      - ESHOSTURL3=${ESHOSTURL3}
+      - USERNAMEES=${USERNAMEES}
+      - PASSWORDES=${PASSWORDES}
+      - KIBANAHOST=${KIBANAHOST}
+    command: filebeat -e -strict.perms=false
+    restart: on-failure
+
+  suricata:
+    image: suricata:1
+    container_name: suricata
+    volumes:
+      - ./suricata/log/:/var/log/suricata/
+      - ./suricata/etc/:/etc/suricata/
+      - ./suricata/etc/rules/:/etc/suricata/rules/
+      - /home/opt/testpro/ruleset/:/etc/suricata/ruleset/
+      - /home/opt/testpro/ruleset/rules/sw.rules:/etc/suricata/rules/sw.rules/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Bangkok
+    network_mode: host
+    restart: on-failure
+
+  python:
+    image: python:1.0.1
+    container_name: python
+    volumes:
+      - /home/webusr/testpro/ruleset/:/usr/share/python/
+      #- /home/webusr/testpro/ruleset/:/usr/share/python/rules
+    environment:
+      - TZ=Asia/Bangkok
+      - EXPORTSETHTTP=${EXPORTSETHTTP}
+      - EXPORTSETHTTPS=${EXPORTSETHTTPS}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+    
+    command: python3 /usr/share/python/rulesw.py
+    
+networks:
+  ids:
+    driver: bridge

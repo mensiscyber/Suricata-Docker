@@ -1,0 +1,6 @@
+#alert icmp any any -> any any (msg:"Ping test .......";sid:100000001;rev:1;)
+#alert dns any any -> any any (msg:"DNS google"; content:"google"; classtype:policy-violation; sid:39398144; rev:1;)
+#alert tcp any any -> any any (msg:"test alert google.com"; content:"google.com";classtype:bad-unknown ; sid:2230031; rev:1;)
+#alert tls any any -> any any (msg:"test alert google.hk"; content:"google.co.hk";classtype:bad-unknown ; sid:2230032; rev:1;)
+
+#alert tls any any -> any any (msg:"test alert google.jp"; content:"google.co.jp";classtype:bad-unknown ; sid:2230033; rev:1;)
